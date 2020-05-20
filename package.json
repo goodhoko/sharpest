@@ -1,0 +1,11 @@
+{
+  "name": "sharpest",
+  "version": "1.0.0",
+  "description": "Finding the balance between compression and downscaling for jpeg images",
+  "main": "out/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "goodhoko",
+  "license": "ISC"
+}
