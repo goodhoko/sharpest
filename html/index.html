@@ -1,0 +1,93 @@
+<html>
+    <head>
+        <meta charset="utf8">
+        <title>JPEG test</title>
+        <style>
+            body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .comparison {
+                display: flex;
+                width: 100%;
+                justify-content: space-around;
+            }
+                .comparison img {
+                    width: 900px;
+                    height: 900px;
+                }
+            .info {
+                padding-top: 1em;
+                text-align: center;
+                min-height: 1em;
+            }
+            .size-vs-diff {
+                width: 1000px;
+                height: 500px;
+            }
+            .selector {
+                margin: 50px;
+                display: grid;
+                grid: repeat(10, 45px) / auto-flow 45px;
+            }
+                .selector > span {
+                    text-align: center;
+                    background-color: #ccc;
+                    width: 40px;
+                    height: 40px;
+                }
+                .selector > span:hover {
+                    background-color: #bbb;
+                }
+        </style>
+    </head>
+    <body>
+        <div class="comparison">
+            <img class="jpeg" src="../jpeg/anna_1000_10.jpg">
+            <img class="original" src="../original/anna.jpg">
+        </div>
+        <div class="info"></div>
+        <div class="selector"></div>
+        <div class="size-vs-diff">
+            <canvas></canvas>
+        </div>
+    </body>
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../node_modules/chart.js/dist/Chart.bundle.js"></script>
+    <script src="./output.js"></script>
+    <script>
+        images.forEach(image => {
+            jQuery('<span>', {html: `${image.dimension} ${image.quality}`})
+            .hover(event => {
+                $('.jpeg').attr('src', `../${image.jpeg}`)
+                $('.info').html(`volume: ${image.fileSize / 1e3} kb, diff: ${Math.log(image.diff)}`)
+            }).appendTo('.selector')
+        });
+
+        const ctx = jQuery('.size-vs-diff > canvas')[0].getContext('2d')
+        const sizeVsDiff = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    data: images.map(image => {return {x: image.fileSize / 1e3, y: image.diff, label: `${image.dimension} ${image.quality}`}})
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                tooltips: {
+                    mode: 'index',
+                    callbacks: {
+                        footer: (tooltipItems, data) => data.datasets[tooltipItems[0].datasetIndex].data[tooltipItems[0].index].label
+                    },
+                    footerFontStyle: 'normal'
+                },
+                hover: {
+                    mode: 'index',
+                    intersect: true
+                }
+            }
+        });
+    </script>
+</html>
